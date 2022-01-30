@@ -36,7 +36,7 @@ export class UsersService {
   }
 
   findEmail(email: string): Promise<Users | undefined> {
-    return this.usersRepository.createQueryBuilder("users").where( "user.email = :email", { email: email } ).getOne(); 
+    return this.usersRepository.createQueryBuilder("users").where( "users.email = :email", { email: email } ).getOne(); 
   }
 
   async remove(id: string): Promise<void> {

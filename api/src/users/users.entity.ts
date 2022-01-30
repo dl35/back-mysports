@@ -12,30 +12,26 @@ export class Users {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
  
-  @Column()
+  @Column({nullable: false})
   nom: string;
 
-  @Column()
+  @Column({nullable: false})
   prenom: string
 
   @Column({
-    unique:true
+    unique:true, 
+    nullable: false
   })
   email: string
   
-  @Column()
+  @Column({nullable: false})
   passwd: string
 
-  @Column()
+  @Column({nullable: false})
   adresse: string
 
-  @Column()
+  @Column({nullable: false})
   ville: string
 
   @Column({
