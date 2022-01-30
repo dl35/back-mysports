@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/users.dto';
 import { Users } from './users.entity';
 import { UsersService } from './users.service';
@@ -22,7 +22,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
-  
+  @HttpCode(200)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe  ) id: number): Promise<Users> {
     return this.usersService.findOne(id);
