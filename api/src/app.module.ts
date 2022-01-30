@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -35,15 +36,15 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     
     ActivitesModule],
   controllers: [AppController],
-  providers: [AppService,
-    {
+  providers: [AppService, JwtStrategy
+   /* {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
     {
       provide: APP_GUARD,
       useClass: RoleGuard,
-    },
+    },*/
 
   ],
 })

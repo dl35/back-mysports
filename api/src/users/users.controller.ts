@@ -1,7 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/users.dto';
 import { Users } from './users.entity';
 import { UsersService } from './users.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+
 
 @Controller('users')
 export class UsersController {
@@ -17,6 +20,9 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  
   @Get(':id')
   findOne(@Param('id', ParseIntPipe  ) id: number): Promise<Users> {
     return this.usersService.findOne(id);
@@ -27,3 +33,5 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 }
+
+
