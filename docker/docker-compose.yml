@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+
+  nest:
+    build:
+      context: .
+      #dockerfile: ./docker/Dockerfile 
+    container_name: ${CONTAINER_NAME}:${TAG}"
+    image: "${IMAGE_NAME}:${TAG}"
+    user: "${UID}:${GID}"
+    depends_on:
+      - mysql 
+      - phpmyadmin
+    volumes:
+      - ../api:/api
+    environment:
+        - CONTAINER_NAME=${CONTAINER_NAME}:${TAG} 
+    ports:
+      - 3000:3000
+
+
+  mysql:
+    image: mysql:5.6.40
+    #hostname: 'alias-mysql'
+    environment:
+        MYSQL_DATABASE: product
+        MYSQL_USER: prod
+        MYSQL_PASSWORD: prod
+        MYSQL_ROOT_PASSWORD: prod
+    volumes:
+      - my-database:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - mysql
+    ports:
+          - 3800:80
+    environment:
+          MYSQL_USER: prod
+          MYSQL_PASSWORD: prod
+          MYSQL_ROOT_PASSWORD: prod
+          PMA_HOST: mysql
+
+
+volumes:
+  my-database:
+    
