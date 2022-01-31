@@ -22,7 +22,7 @@ export class ActivitesService {
     act.dist = createActiviteDto.dist;
     act.desc = createActiviteDto.desc;
  
-    // act.user = createActiviteDto.userid;
+    act.userId = createActiviteDto.userid;
 
     return this.activiteRepository.save( act );
   }

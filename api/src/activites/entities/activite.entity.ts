@@ -1,5 +1,5 @@
 import { User } from "src/users/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 export enum ActivityType {
@@ -28,8 +28,12 @@ export class Activite {
     @Column({nullable: true, default:null})
     desc : string | null = null;
 
-   
+    @Column("int", { nullable: false })
+    userId: number;
+
+
     @ManyToOne(type => User, user => user.activite)
+    @JoinColumn({ name: "userId" })
     user: User;
 
     
