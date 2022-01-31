@@ -1,4 +1,3 @@
-import { IsDate, IsOptional, IsString } from "class-validator";
 import { User } from "src/users/user.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -24,15 +23,14 @@ export class Activite {
     dist: number
 
     @Column({nullable: false})
-    @IsDate()
     date : Date;
 
-    @Column()
-    @IsOptional()
-    @IsString()
-    desc : number | null = null;
+    @Column({nullable: true, default:null})
+    desc : string | null = null;
 
-
+   
     @ManyToOne(type => User, user => user.activite)
     user: User;
+
+    
 }

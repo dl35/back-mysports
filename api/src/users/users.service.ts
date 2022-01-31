@@ -13,6 +13,7 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
+  /*
   async create(createUserDto: CreateUserDto): Promise<User> {
     const users = new User();
     users.nom = createUserDto.nom;
@@ -33,7 +34,13 @@ export class UsersService {
 
 
     return this.usersRepository.save(users);
+  }*/
+
+  async save(users) {
+    return this.usersRepository.save(users);
+
   }
+
 
   async update(id: number , createUserDto: CreateUserDto): Promise<UpdateResult>   
    {

@@ -22,7 +22,7 @@ export class ActivitesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.activitesService.findOne(+id);
+    return this.activitesService.get(+id);
   }
 
   @Patch(':id')

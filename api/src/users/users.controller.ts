@@ -19,13 +19,14 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
 
+  /*
   @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
   @Post()
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createUserDto);
   }
-
+  */
 
   @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
