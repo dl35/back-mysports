@@ -1,3 +1,4 @@
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { PaginateDto } from './dto/paginate.dto';
 import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/users.dto';
@@ -40,12 +41,12 @@ export class UsersController {
 
     // si pas admin controle id...
     console.log( req );
-    return this.usersService.findOne(id);
+    return this.usersService.findUsers(id);
   }
 
   @HttpCode(200)
   @Patch(':id')
-  update(@Param('id', ParseIntPipe  ) id: number  , @Body() createUserDto: CreateUserDto  ): Promise<Users> {
+  update(@Param('id', ParseIntPipe  ) id: number  , @Body() createUserDto: CreateUserDto  ): Promise<UpdateResult> {
     //si pas admin controler id...
 
     return this.usersService.update(id , createUserDto );
@@ -54,7 +55,7 @@ export class UsersController {
   @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
+  remove(@Param('id') id: number): Promise<DeleteResult> {
     return this.usersService.remove(id);
   }
 }

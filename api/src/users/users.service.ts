@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { PaginateDto } from './dto/paginate.dto';
 import { ParamsPaginateDto } from './dto/params-paginate.dto';
 import { CreateUserDto } from './dto/users.dto';
@@ -35,7 +35,8 @@ export class UsersService {
     return this.usersRepository.save(users);
   }
 
-  async update(id: number , createUserDto: CreateUserDto): Promise<Users> {
+  async update(id: number , createUserDto: CreateUserDto): Promise<UpdateResult>   
+   {
     const users = new Users();
     users.nom = createUserDto.nom;
     users.prenom = createUserDto.prenom;
@@ -47,13 +48,18 @@ export class UsersService {
     if( createUserDto.role )
         users.role = createUserDto.role;
 
-    const u = await this.findOne(users.id) ;
+    let u =  await this.usersRepository.findOne(id);
     if( !u ){
       throw new  NotFoundException('User not exist');
     }
 
+    u =  await this.findByEmailnotId( id, users.email );
+    if(  u ){
+      throw new ConflictException('this Email exist');
+    }
 
-    return this.usersRepository.save(users);
+    return this.usersRepository.update(id ,users);
+    
   }
 
 
@@ -92,19 +98,38 @@ export class UsersService {
 
   }
 
-  async findOne(id: number): Promise<Users> {
+  async findUsers(id: number): Promise<Users> {
     const u = await this.usersRepository.findOne(id);
     if ( !u  ){
-        throw new NotFoundException()
+        throw new NotFoundException('Users not found.')
     } 
     return u;
+  }
+
+
+
+  async findByEmailnotId(id: number, email: string): Promise<Users | undefined> {
+    return this.usersRepository.createQueryBuilder("users").where( "users.id != :id", { id: id } )
+    .andWhere(  "users.email = :email", { email: email }  )
+    .getOne(); 
+  }
+
+
+  async findById(id: number): Promise<Users | undefined> {
+    return this.usersRepository.createQueryBuilder("users").where( "users.id = :id", { id: id } )
+    .getOne(); 
   }
 
   async findByEmail(email: string): Promise<Users | undefined> {
     return this.usersRepository.createQueryBuilder("users").where( "users.email = :email", { email: email } ).getOne(); 
   }
 
-  async remove(id: number): Promise<void> {
-    await this.usersRepository.delete(id);
+  async remove(id: number): Promise<DeleteResult> {
+    const u: Users = await this.findById(id);
+    if ( ! u ) {
+      throw new NotFoundException('Users not found.');      
+    }
+
+    return this.usersRepository.delete(id);
   }
 }
