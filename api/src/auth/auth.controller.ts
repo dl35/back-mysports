@@ -2,12 +2,12 @@ import { LoginDto } from './dto/login.dto';
 import { Body, Controller,  Get,  Post, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { AuthService } from './auth.service';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from './role.guard';
 import { Role } from './role.decorator';
 import { UserRole } from 'src/users/users.entity';
 
-
+@ApiTags('Authentification')
 @Controller('auth')
 export class AuthController {
    
@@ -27,8 +27,9 @@ export class AuthController {
     @ApiBearerAuth('JWT-auth')
     @Get('profile')
     async profile(@Request() req) {
-      console.log( 'ok....', req.user );
-      return "ok";
+      const ret ={"success":true}
+      console.log( 'profile....', ret);
+      return ret ;
     }
 
 

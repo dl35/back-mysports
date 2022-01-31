@@ -13,8 +13,9 @@ private logger = new Logger('HTTP');
     
     response.on('finish', () => {
       const { statusCode }  = response;
-      const contentLengh = response.get('content-length');
+      const contentLengh = (response.get('content-length')) ? response.get('content-length') : "0";
       
+
       this.logger.log(
           `${method} ${originalUrl} ${statusCode} ${contentLengh} `
           //`${method} ${originalUrl} ${statusCode} ${contentLengh} - ${userAgent}${ip}`

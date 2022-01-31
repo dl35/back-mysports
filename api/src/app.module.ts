@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ActivitesModule } from './activites/activites.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { LoggerMiddleware } from './middleware/logger.middleware';
@@ -18,22 +18,22 @@ import { JwtStrategy } from './auth/jwt.strategy';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'mysql',
-      port: 3306,
-      username: 'prod',
-      password: 'prod',
-      database: 'product',
-      autoLoadEntities: true,
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.get('DATABASE_HOST', 'mysql'),
+        port: configService.get<number>('DATABASE_PORT', 3306 ),
+        username: configService.get('DATABASE_USER', 'prod'),
+        password: configService.get('DATABASE_PASS', 'prod'),
+        database: configService.get('DATABASE_SCHEMA', 'product'),
+        autoLoadEntities: true,
+        synchronize: true,
+      }),
     }),
-    
     UsersModule,
-    
     AuthModule,
-    
     ActivitesModule],
   controllers: [AppController],
   providers: [AppService, JwtStrategy
