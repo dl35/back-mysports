@@ -4,17 +4,17 @@ import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { PaginateDto } from './dto/paginate.dto';
 import { ParamsPaginateDto } from './dto/params-paginate.dto';
 import { CreateUserDto } from './dto/users.dto';
-import { Users } from './users.entity';
+import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(Users)
-    private readonly usersRepository: Repository<Users>,
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<Users> {
-    const users = new Users();
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const users = new User();
     users.nom = createUserDto.nom;
     users.prenom = createUserDto.prenom;
     users.email = createUserDto.email;
@@ -37,7 +37,7 @@ export class UsersService {
 
   async update(id: number , createUserDto: CreateUserDto): Promise<UpdateResult>   
    {
-    const users = new Users();
+    const users = new User();
     users.nom = createUserDto.nom;
     users.prenom = createUserDto.prenom;
     users.email = createUserDto.email;
@@ -98,7 +98,7 @@ export class UsersService {
 
   }
 
-  async findUsers(id: number): Promise<Users> {
+  async findUser(id: number): Promise<User> {
     const u = await this.usersRepository.findOne(id);
     if ( !u  ){
         throw new NotFoundException('Users not found.')
@@ -108,24 +108,24 @@ export class UsersService {
 
 
 
-  async findByEmailnotId(id: number, email: string): Promise<Users | undefined> {
+  async findByEmailnotId(id: number, email: string): Promise<User | undefined> {
     return this.usersRepository.createQueryBuilder("users").where( "users.id != :id", { id: id } )
     .andWhere(  "users.email = :email", { email: email }  )
     .getOne(); 
   }
 
 
-  async findById(id: number): Promise<Users | undefined> {
+  async findById(id: number): Promise<User | undefined> {
     return this.usersRepository.createQueryBuilder("users").where( "users.id = :id", { id: id } )
     .getOne(); 
   }
 
-  async findByEmail(email: string): Promise<Users | undefined> {
+  async findByEmail(email: string): Promise<User | undefined> {
     return this.usersRepository.createQueryBuilder("users").where( "users.email = :email", { email: email } ).getOne(); 
   }
 
   async remove(id: number): Promise<DeleteResult> {
-    const u: Users = await this.findById(id);
+    const u: User = await this.findById(id);
     if ( ! u ) {
       throw new NotFoundException('Users not found.');      
     }

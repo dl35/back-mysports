@@ -32,8 +32,9 @@ import { JwtStrategy } from './auth/jwt.strategy';
         synchronize: true,
       }),
     }),
-    UsersModule,
+    
     AuthModule,
+    UsersModule,
     ActivitesModule],
   controllers: [AppController],
   providers: [AppService, JwtStrategy

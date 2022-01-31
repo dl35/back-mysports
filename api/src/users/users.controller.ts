@@ -2,7 +2,7 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { PaginateDto } from './dto/paginate.dto';
 import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/users.dto';
-import { UserRole, Users } from './users.entity';
+import { UserRole, User } from './user.entity';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiPropertyOptional, ApiTags } from '@nestjs/swagger';
@@ -22,7 +22,7 @@ export class UsersController {
   @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
   @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<Users> {
+  create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createUserDto);
   }
 
@@ -37,11 +37,11 @@ export class UsersController {
 
   @HttpCode(200)
   @Get(':id')
-  findOne(@Req()req: Request , @Param('id', ParseIntPipe  ) id: number): Promise<Users> {
+  findOne(@Req()req: Request , @Param('id', ParseIntPipe  ) id: number): Promise<User> {
 
     // si pas admin controle id...
     console.log( req );
-    return this.usersService.findUsers(id);
+    return this.usersService.findUser(id);
   }
 
   @HttpCode(200)

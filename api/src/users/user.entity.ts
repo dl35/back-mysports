@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Activite } from '../activites/entities/activite.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum UserRole {
     ADMIN = "ADMIN",
@@ -7,7 +8,7 @@ export enum UserRole {
 
 
 @Entity()
-export class Users {
+export class User {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -35,10 +36,10 @@ export class Users {
   ville: string
 
   @Column({
-      type: "int",
+      
       width:5      
   })
-  cp: number
+  cp: string
   
   @Column({
     type: "enum",
@@ -46,4 +47,11 @@ export class Users {
     default: UserRole.USER
 })
   role: UserRole
+
+
+  @OneToMany(() => Activite, activite => activite.user)
+  activite: Activite[];
+
+
+
 }
