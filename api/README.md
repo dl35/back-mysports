@@ -11,6 +11,7 @@
 ## Installation
 
 ```bash
+rÃ©cuoeration du projet
 $ npm install
 ```
 
@@ -27,9 +28,50 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Infos
 
 ```bash
+### Configuration 
+creation du fichier .env avec les variables d environnement
+Utilisation de ConfigService de ConfigModule
+
+### Middleware pour le Log
+Toutes les requetes sont affichées dans la console avec le status et la route
+Utilisation pour toutes les routes 
+chargé dans app.module... 
+configure(consumer: MiddlewareConsumer)
+
+### Securité
+répertoire auth
+Utilisation de jwt
+Fichier Jwt.strategy 
+il gère tous seul la présence du token dans les headers Authorization  et sa validité 
+La startégie est validée en nvoyant un objet user -> { id: payload.id, role: payload.role }
+Fichier jwt-auth.guard
+ajoute user à request
+
+role.guard
+gestion des roles ADMIN et USER
+recupere le role de l'objet user
+role.decorator
+génère le decorateur @Role
+
+
+
+###Les routes
+auth, user, activité
+
+### exemple de custom validation
+cf fichier activites/dto/ValidationDist
+
+
+
+
+
+
+
+
+
 # unit tests
 $ npm run test
 
