@@ -16,7 +16,9 @@ export class Activite {
     id: number;
   
    
-    @Column({nullable: false})
+    @Column({ type: 'enum',
+              enum: ActivityType 
+    })
     type: ActivityType
    
     @Column({nullable: false})
@@ -32,7 +34,7 @@ export class Activite {
     userId: number;
 
 
-    @ManyToOne(type => User, user => user.activite)
+    @ManyToOne(type => User, user => user.activite , { onDelete: "CASCADE" } )
     @JoinColumn({ name: "userId" })
     user: User;
 

@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
-import { PaginateDto } from './dto/paginate.dto';
+import { UserPageDto } from './dto/users-page.dto';
 import { ParamsPaginateDto } from './dto/params-paginate.dto';
 import { CreateUserDto } from './dto/users.dto';
 import { User } from './user.entity';
@@ -73,7 +73,7 @@ export class UsersService {
 
 
 
-  async findAll(params:  ParamsPaginateDto ): Promise<PaginateDto> {
+  async findAll(params:  ParamsPaginateDto ): Promise<UserPageDto> {
     
     let page: number = Number( params.page );
     const search = params.search;
@@ -97,7 +97,7 @@ export class UsersService {
       const next = page+1 >lastPage ? false : true ;
       //page-1 < 1 ? null :page-1;
       const prev = page-1 < 1 ? false : true ;
-      const res = new PaginateDto(list, next ,prev); 
+      const res = new UserPageDto(list, next ,prev); 
       return res;
     
 

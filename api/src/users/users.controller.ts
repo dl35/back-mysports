@@ -1,15 +1,15 @@
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { PaginateDto } from './dto/paginate.dto';
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { UserPageDto } from './dto/users-page.dto';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/users.dto';
 import { UserRole, User } from './user.entity';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ApiBearerAuth, ApiPropertyOptional, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/auth/role.decorator';
 import { RoleGuard } from 'src/auth/role.guard';
 import { ParamsPaginateDto } from './dto/params-paginate.dto';
-import { Request } from 'express';
+
 
 @ApiBearerAuth('JWT-auth')
 @ApiTags('Users')
@@ -31,32 +31,61 @@ export class UsersController {
   @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
   @Get()
-  findAll( @Query() params:  ParamsPaginateDto ) : Promise<PaginateDto> {
+  findAll( @Query() params:  ParamsPaginateDto ) : Promise<UserPageDto> {
     return this.usersService.findAll( params );
   }
 
 
   @HttpCode(200)
   @Get(':id')
-  findOne(@Req()req: Request , @Param('id', ParseIntPipe  ) id: number): Promise<User> {
+  get(@Request()req , @Param('id', ParseIntPipe  ) id: number): Promise<User> {
+      
+     if ( req.user && req.user.id && req.user.role) {
 
-    // si pas admin controle id...
-    console.log( req );
-    return this.usersService.findUser(id);
+          if( req.user.role == UserRole.ADMIN ) {
+            return this.usersService.findUser(id);
+          } else if ( req.user.id  == id ) {
+            return this.usersService.findUser(id);
+          } else {
+            throw new UnauthorizedException()
+          }
+
+      } else {
+            throw new UnauthorizedException()
+           }
+   
   }
 
   @HttpCode(200)
   @Patch(':id')
-  update(@Param('id', ParseIntPipe  ) id: number  , @Body() createUserDto: CreateUserDto  ): Promise<UpdateResult> {
-    //si pas admin controler id...
+  update(@Request()req , @Param('id', ParseIntPipe  ) id: number  , @Body() createUserDto: CreateUserDto  ): Promise<UpdateResult> {
+   
+    if ( req.user && req.user.id && req.user.role) {
 
-    return this.usersService.update(id , createUserDto );
+      if( req.user.role == UserRole.ADMIN ) {
+        return this.usersService.update(id , createUserDto );
+      } else if ( req.user.id  == id ) {
+        return this.usersService.update(id , createUserDto );
+      } else {
+        throw new UnauthorizedException()
+      }
+
+  } else {
+        throw new UnauthorizedException()
+       }
+    
   }
 
   @Role(UserRole.ADMIN)
   @UseGuards(RoleGuard)
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<DeleteResult> {
+  remove(@Request()req , @Param('id') id: number): Promise<DeleteResult> {
+
+    if ( req.user && req.user.id == id) {
+      throw new UnauthorizedException()
+    }
+
+
     return this.usersService.remove(id);
   }
 }

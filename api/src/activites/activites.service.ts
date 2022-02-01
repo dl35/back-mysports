@@ -4,6 +4,8 @@ import { CreateActiviteDto } from './dto/create-activite.dto';
 import { UpdateActiviteDto } from './dto/update-activite.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { ParamsPaginateDto } from 'src/users/dto/params-paginate.dto';
+import { ActivitePageDto } from './dto/activite-page-dto';
 
 @Injectable()
 export class ActivitesService {
@@ -22,19 +24,50 @@ export class ActivitesService {
     act.dist = createActiviteDto.dist;
     act.desc = createActiviteDto.desc;
  
-    act.userId = createActiviteDto.userid;
+    act.userId = createActiviteDto.userId;
 
     return this.activiteRepository.save( act );
   }
 
-  findAll() {
-    return `This action returns all activites`;
+  async findAll(userid: number , params:  ParamsPaginateDto ): Promise<ActivitePageDto> {
+    
+    let page: number = Number( params.page );
+    // const search = params.search;
+
+    const pageSize = 2 ;
+    if( page <= 0 ) {
+      page = 1;
+    }
+
+   
+    const [list , count ] = await this.activiteRepository.findAndCount({
+      where: { userid:  userid } ,
+      order: { date: 'DESC' } ,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    });
+
+      const lastPage=Math.ceil(count/pageSize);
+      console.log( page, page+1 , page-1 ,  lastPage );
+      
+      // page+1 >lastPage ? null :page+1;
+      const next = page+1 >lastPage ? false : true ;
+      //page-1 < 1 ? null :page-1;
+      const prev = page-1 < 1 ? false : true ;
+      const res = new ActivitePageDto(list, next ,prev); 
+      return res;
+    
+
+
+
   }
+
+ 
 
   async get(id: number): Promise<Activite> {
     const act = await this.activiteRepository.findOne(id);
     if ( !act  ){
-        throw new NotFoundException('Users not found.')
+        throw new NotFoundException('Activite not found.')
     } 
     return act;
   }

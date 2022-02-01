@@ -3,7 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsBoolean } from "class-validator";
 
 
-export class PaginateDto {
+export class UserPageDto {
 
     @IsArray()
     @ApiProperty({ isArray: true })
