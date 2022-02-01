@@ -41,7 +41,7 @@ export class ActivitesService {
 
    
     const [list , count ] = await this.activiteRepository.findAndCount({
-      where: { userid:  userid } ,
+      where: { userId:  userid } ,
       order: { date: 'DESC' } ,
       skip: (page - 1) * pageSize,
       take: pageSize,

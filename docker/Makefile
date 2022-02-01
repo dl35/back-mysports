@@ -26,3 +26,8 @@ build:clean
 
 dev: 
 	$(CC)  run --rm  --service-ports nest
+
+import:
+	gunzip < datas/user.sql.gz | $(CC) exec -T mysql mysql -uprod -pprod  product 
+	gunzip < datas/activite.sql.gz |$(CC) exec -T mysql mysql -uprod -pprod  product 
+

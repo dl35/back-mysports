@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsDate, IsEnum, IsInt, IsNumber, IsOptional, IsString, Length, Min, ValidateIf } from "class-validator";
+import { IsDate, IsEnum, IsInt, isNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Length, Min, Validate, ValidateIf } from "class-validator";
 import { ActivityType } from "../entities/activite.entity";
+import { ValidationDist } from "./ValidationDist";
 
 export class CreateActiviteDto {
 
@@ -12,13 +13,8 @@ export class CreateActiviteDto {
    
     @ApiProperty({default: "5000", required: true})
     @IsInt()
-
-    @ValidateIf(o => o.type === ActivityType.BIKE )
-    @Min(10000)
-    @ValidateIf(o => o.type === ActivityType.RUN )
-    @Min(5000)
-    @ValidateIf(o => o.type === ActivityType.SWIM )
-    @Min(500)
+    @IsPositive()
+    @Validate(ValidationDist)
     dist: number
 
     @ApiProperty({default: new Date() , required: true}) 
