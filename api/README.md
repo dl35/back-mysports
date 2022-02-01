@@ -11,7 +11,7 @@
 ## Installation
 
 ```bash
-rÃ©cuoeration du projet
+
 $ npm install
 ```
 
@@ -32,7 +32,7 @@ $ npm run start:prod
 
 ```bash
 ### Configuration 
-creation du fichier .env avec les variables d environnement
+création du fichier .env avec les variables d'environnement
 Utilisation de ConfigService de ConfigModule
 
 ### Middleware pour le Log
