@@ -7,6 +7,7 @@ services:
       context: .
       #dockerfile: ./docker/Dockerfile 
     container_name: ${CONTAINER_NAME}:${TAG}"
+    hostname: 'nest-back'
     image: "${IMAGE_NAME}:${TAG}"
     user: "${UID}:${GID}"
     depends_on:

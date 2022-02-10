@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {  IsInt,  IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import {  IsInt,  IsNumber,  IsOptional, IsString } from 'class-validator';
 
 
 export class ParamsPaginateDto {
@@ -7,8 +8,15 @@ export class ParamsPaginateDto {
     //id: number;
     @ApiPropertyOptional()
     @IsOptional()
+    @IsString()
     search: string;
 
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    size: number = 15;
 
     @ApiProperty({
         type: Number,
@@ -17,6 +25,8 @@ export class ParamsPaginateDto {
     
     //  @IsInt()
     @IsOptional()
+    @Type(() => Number)
+    @IsInt()
     @ApiPropertyOptional()
     page: number = 1 ;
    

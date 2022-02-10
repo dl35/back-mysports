@@ -19,10 +19,10 @@ export class RoleGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    const user = request.user // as Users; //Use passport authentication strategy
+    const payload = request.user // as Users; //Use passport authentication strategy
 
-    console.log('user !!!!.... ', user )
-    return roles.some((role) => user.role.includes(role));
+    console.log('user !!!!.... ', payload )
+    return roles.some((role) => payload.role.includes(role));
     
 
   }

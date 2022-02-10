@@ -1,4 +1,4 @@
-import { CreateUserDto } from './../users/dto/users.dto';
+import { CreateUserDto } from '../users/dto/user.dto';
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/user.entity';
@@ -30,6 +30,7 @@ export class AuthService {
       const payload = { id: user.id, role: user.role };
       return {
       access_token: this.jwtService.sign(payload),
+      name: user.prenom
       };
   }
 

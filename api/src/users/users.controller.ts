@@ -1,7 +1,7 @@
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { UserPageDto } from './dto/users-page.dto';
+import { UserPageDto } from './dto/user-page.dto';
 import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
-import { CreateUserDto } from './dto/users.dto';
+import { CreateUserDto } from './dto/user.dto';
 import { UserRole, User } from './user.entity';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -12,9 +12,9 @@ import { ParamsPaginateDto } from './dto/params-paginate.dto';
 
 
 @ApiBearerAuth('JWT-auth')
-@ApiTags('Users')
+@ApiTags('User')
 @UseGuards(JwtAuthGuard)
-@Controller('users')
+@Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -28,33 +28,40 @@ export class UsersController {
   }
   */
 
-  @Role(UserRole.ADMIN)
-  @UseGuards(RoleGuard)
+  //@Role(UserRole.ADMIN)
+  //@UseGuards(RoleGuard)
   @Get()
   findAll( @Query() params:  ParamsPaginateDto ) : Promise<UserPageDto> {
-    return this.usersService.findAll( params );
+    return  this.usersService.findAll( params );
   }
-
 
   @HttpCode(200)
-  @Get(':id')
-  get(@Request()req , @Param('id', ParseIntPipe  ) id: number): Promise<User> {
-      
-     if ( req.user && req.user.id && req.user.role) {
-
-          if( req.user.role == UserRole.ADMIN ) {
-            return this.usersService.findUser(id);
-          } else if ( req.user.id  == id ) {
-            return this.usersService.findUser(id);
-          } else {
-            throw new UnauthorizedException()
-          }
-
-      } else {
-            throw new UnauthorizedException()
-           }
-   
+  @Get('/profile')
+  getprofile(@Request()req ): Promise<User> {
+      return this.usersService.findUser(req.user.id);
+    
   }
+  @HttpCode(200)
+  @Patch('/profile')
+  patchprofile(@Request()req , @Body() createUserDto: CreateUserDto): Promise<UpdateResult> {
+      return  this.usersService.update(req.user.id , createUserDto );
+  }
+
+
+  @Role(UserRole.ADMIN)
+  @UseGuards(RoleGuard) 
+  @HttpCode(200)
+  @Get(':id')
+  get(@Param('id', ParseIntPipe  ) id: number): Promise<User> {
+            return this.usersService.findUser(id);
+     }
+
+  
+
+
+
+
+
 
   @HttpCode(200)
   @Patch(':id')

@@ -6,16 +6,17 @@ import { AppModule } from './app.module';
 async function bootstrap() {
  
   const app = await NestFactory.create(AppModule, {
-    logger: ['log', 'error', 'warn', 'debug', 'verbose']
+    //  logger: ['log', 'error', 'warn', 'debug', 'verbose']
   });
   app.enableCors();
 
 
+  //  pour le protocle ws ( websocket)
+  //  app.useWebSocketAdapter(new WsAdapter(app));
 
   app.useGlobalPipes( new ValidationPipe(
       {
         transform:true,
-        whitelist: true,
         forbidNonWhitelisted:true,
         //errorHttpStatusCode:
       }

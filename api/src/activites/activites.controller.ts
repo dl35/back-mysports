@@ -12,7 +12,7 @@ import { UpdateActiviteDto } from './dto/update-activite.dto';
 @ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
 @ApiTags('Activities')
-@Controller('activites')
+@Controller('activite')
 export class ActivitesController {
   constructor(private readonly activitesService: ActivitesService) {}
 
@@ -33,6 +33,7 @@ export class ActivitesController {
 
   @Get()
   findAll(@Request()req ,  @Query() params:  ParamsPaginateDto ) {
+   
       if( req.user && req.user.id) {
         return this.activitesService.findAll( req.user.id , params );
       } else {

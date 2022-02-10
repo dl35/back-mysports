@@ -1,71 +1,71 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
-import { UserPageDto } from './dto/users-page.dto';
+import { UserPageDto } from './dto/user-page.dto';
 import { ParamsPaginateDto } from './dto/params-paginate.dto';
-import { CreateUserDto } from './dto/users.dto';
+import { CreateUserDto } from './dto/user.dto';
 import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
   ) {}
 
   /*
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const users = new User();
-    users.nom = createUserDto.nom;
-    users.prenom = createUserDto.prenom;
-    users.email = createUserDto.email;
-    users.passwd = createUserDto.passwd;
-    users.adresse = createUserDto.adresse;
-    users.ville = createUserDto.ville;
-    users.cp = createUserDto.cp;
+    const user = new User();
+    user.nom = createUserDto.nom;
+    user.prenom = createUserDto.prenom;
+    user.email = createUserDto.email;
+    user.passwd = createUserDto.passwd;
+    user.adresse = createUserDto.adresse;
+    user.ville = createUserDto.ville;
+    user.cp = createUserDto.cp;
     if( createUserDto.role )
-        users.role = createUserDto.role;
+        user.role = createUserDto.role;
 
-    const u = await this.findByEmail(users.email) ;
+    const u = await this.findByEmail(user.email) ;
     if( u ){
       throw new ConflictException('User already exist');
      
     }
 
 
-    return this.usersRepository.save(users);
+    return this.userRepository.save(user);
   }*/
 
-  async save(users) {
-    return this.usersRepository.save(users);
+  async save(user) {
+    return this.userRepository.save(user);
 
   }
 
 
   async update(id: number , createUserDto: CreateUserDto): Promise<UpdateResult>   
    {
-    const users = new User();
-    users.nom = createUserDto.nom;
-    users.prenom = createUserDto.prenom;
-    users.email = createUserDto.email;
-    users.passwd = createUserDto.passwd;
-    users.adresse = createUserDto.adresse;
-    users.ville = createUserDto.ville;
-    users.cp = createUserDto.cp;
+    const user = new User();
+    user.nom = createUserDto.nom;
+    user.prenom = createUserDto.prenom;
+    user.email = createUserDto.email;
+    user.passwd = createUserDto.passwd;
+    user.adresse = createUserDto.adresse;
+    user.ville = createUserDto.ville;
+    user.cp = createUserDto.cp;
     if( createUserDto.role )
-        users.role = createUserDto.role;
+        user.role = createUserDto.role;
 
-    let u =  await this.usersRepository.findOne(id);
+    let u =  await this.userRepository.findOne(id);
     if( !u ){
       throw new  NotFoundException('User not exist');
     }
 
-    u =  await this.findByEmailnotId( id, users.email );
+    u =  await this.findByEmailnotId( id, user.email );
     if(  u ){
       throw new ConflictException('this Email exist');
     }
 
-    return this.usersRepository.update(id ,users);
+    return this.userRepository.update(id ,user);
     
   }
 
@@ -83,7 +83,7 @@ export class UsersService {
       page = 1;
     }
      //doc https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
-    const [list , count ] = await this.usersRepository.findAndCount({
+    const [list , count ] = await this.userRepository.findAndCount({
       where: search ? { nom: Like('%' + search + '%') }  : {} ,
       order: { nom: 'ASC' } ,
       skip: (page - 1) * pageSize,
@@ -97,7 +97,7 @@ export class UsersService {
       const next = page+1 >lastPage ? false : true ;
       //page-1 < 1 ? null :page-1;
       const prev = page-1 < 1 ? false : true ;
-      const res = new UserPageDto(list, next ,prev); 
+      const res = new UserPageDto(list, next ,prev, lastPage ); 
       return res;
     
 
@@ -106,9 +106,9 @@ export class UsersService {
   }
 
   async findUser(id: number): Promise<User> {
-    const u = await this.usersRepository.findOne(id);
+    const u = await this.userRepository.findOne(id);
     if ( !u  ){
-        throw new NotFoundException('Users not found.')
+        throw new NotFoundException('user not found.')
     } 
     return u;
   }
@@ -116,27 +116,28 @@ export class UsersService {
 
 
   async findByEmailnotId(id: number, email: string): Promise<User | undefined> {
-    return this.usersRepository.createQueryBuilder("users").where( "users.id != :id", { id: id } )
-    .andWhere(  "users.email = :email", { email: email }  )
+    return this.userRepository.createQueryBuilder("user").where( "user.id != :id", { id: id } )
+    .andWhere(  "user.email = :email", { email: email }  )
     .getOne(); 
   }
 
 
   async findById(id: number): Promise<User | undefined> {
-    return this.usersRepository.createQueryBuilder("users").where( "users.id = :id", { id: id } )
+    return this.userRepository.createQueryBuilder("user").where( "user.id = :id", { id: id } )
     .getOne(); 
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
-    return this.usersRepository.createQueryBuilder("users").where( "users.email = :email", { email: email } ).getOne(); 
+    // return this.userRepository.createQueryBuilder("user").where( "user.email = :email", { email: email } ).getOne(); 
+    return this.userRepository.findOne( {email} );
   }
 
   async remove(id: number): Promise<DeleteResult> {
     const u: User = await this.findById(id);
     if ( ! u ) {
-      throw new NotFoundException('Users not found.');      
+      throw new NotFoundException('user not found.');      
     }
 
-    return this.usersRepository.delete(id);
+    return this.userRepository.delete(id);
   }
 }
