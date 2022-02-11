@@ -1,3 +1,4 @@
+import { UserComplete } from './dto/user.complete.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UserPageDto } from './dto/user-page.dto';
 import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
@@ -34,6 +35,14 @@ export class UsersController {
   findAll( @Query() params:  ParamsPaginateDto ) : Promise<UserPageDto> {
     return  this.usersService.findAll( params );
   }
+
+
+  @Get("autocomplete")
+  autocomplete( @Query() params: {search: string } ) : Promise<UserComplete[]> {
+    return  this.usersService.autocomplete( params.search) ;
+  }
+
+
 
   @HttpCode(200)
   @Get('/profile')

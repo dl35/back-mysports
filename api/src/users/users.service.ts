@@ -5,6 +5,7 @@ import { UserPageDto } from './dto/user-page.dto';
 import { ParamsPaginateDto } from './dto/params-paginate.dto';
 import { CreateUserDto } from './dto/user.dto';
 import { User } from './user.entity';
+import { UserComplete } from './dto/user.complete.dto';
 
 @Injectable()
 export class UsersService {
@@ -69,7 +70,19 @@ export class UsersService {
     
   }
 
+  async autocomplete(search: string ): Promise<UserComplete[]> {
+    const pageSize = 10 ;
+    const datas = await this.userRepository.find({
+      select: ["id","nom","prenom"],
+      where: [ { nom:    Like('%' + search + '%')  } , 
+               { prenom: Like('%' + search + '%')  } ,
+             ] ,
+      order: { nom: 'ASC' , prenom:'ASC' } ,
+      take: pageSize,
+    });
+    return datas;
 
+  }
 
 
 
