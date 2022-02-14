@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, Request, UseGuards, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, Request, UseGuards, UnauthorizedException, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Role } from 'src/auth/role.decorator';
@@ -17,9 +17,21 @@ export class ActivitesController {
   constructor(private readonly activitesService: ActivitesService) {}
 
   @Post()
-  create(@Body() createActiviteDto: CreateActiviteDto) {
-    return this.activitesService.create(createActiviteDto);
+  create(@Request() req , @Body() createActiviteDto: CreateActiviteDto) {
+
+    console.log(req.user.id ,  createActiviteDto )
+    return this.activitesService.create(req.user.id , createActiviteDto);
   }
+
+  @Role(UserRole.ADMIN)
+  @UseGuards(RoleGuard)
+  @Post('/:id')
+  createtoId(@Param('id', ParseIntPipe  ) id: number, @Body() createActiviteDto: CreateActiviteDto) {
+
+
+    return this.activitesService.create(id, createActiviteDto);
+  }
+
 
 
   @Role(UserRole.ADMIN)
@@ -47,7 +59,7 @@ export class ActivitesController {
     return this.activitesService.get(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id', ParseIntPipe  ) id: number, @Body() updateActiviteDto: UpdateActiviteDto) {
     return this.activitesService.update(id, updateActiviteDto);
   }

@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Equal, Like, Not, Repository, UpdateResult } from 'typeorm';
 import { UserPageDto } from './dto/user-page.dto';
 import { ParamsPaginateDto } from './dto/params-paginate.dto';
 import { CreateUserDto } from './dto/user.dto';
@@ -70,16 +70,21 @@ export class UsersService {
     
   }
 
-  async autocomplete(search: string ): Promise<UserComplete[]> {
+  async autocomplete(id: number , search: string ): Promise<UserComplete[]> {
     const pageSize = 10 ;
+
+
     const datas = await this.userRepository.find({
       select: ["id","nom","prenom"],
-      where: [ { nom:    Like('%' + search + '%')  } , 
-               { prenom: Like('%' + search + '%')  } ,
-             ] ,
+      
+      where: [ { nom:    Like('%' + search + '%') , id: Not(id)  } , 
+               { prenom: Like('%' + search + '%') , id: Not(id)  } ,
+             ],
       order: { nom: 'ASC' , prenom:'ASC' } ,
       take: pageSize,
     });
+
+    
     return datas;
 
   }
@@ -104,7 +109,7 @@ export class UsersService {
     });
 
       const lastPage=Math.ceil(count/pageSize);
-      console.log( page, page+1 , page-1 ,  lastPage );
+      
       
       // page+1 >lastPage ? null :page+1;
       const next = page+1 >lastPage ? false : true ;
@@ -136,9 +141,8 @@ export class UsersService {
 
 
   async findById(id: number): Promise<User | undefined> {
-    return this.userRepository.createQueryBuilder("user").where( "user.id = :id", { id: id } )
-    .getOne(); 
-  }
+    return this.userRepository.findOne( id );
+    }
 
   async findByEmail(email: string): Promise<User | undefined> {
     // return this.userRepository.createQueryBuilder("user").where( "user.email = :email", { email: email } ).getOne(); 

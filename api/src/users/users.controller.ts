@@ -38,8 +38,8 @@ export class UsersController {
 
 
   @Get("autocomplete")
-  autocomplete( @Query() params: {search: string } ) : Promise<UserComplete[]> {
-    return  this.usersService.autocomplete( params.search) ;
+  autocomplete(@Request()req , @Query() params: {search: string } ) : Promise<UserComplete[]> {
+    return  this.usersService.autocomplete( req.user.id,  params.search) ;
   }
 
 

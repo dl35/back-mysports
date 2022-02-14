@@ -14,6 +14,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
 import { EventsModule } from './events/events.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
@@ -44,7 +45,9 @@ import { ScheduleModule } from '@nestjs/schedule';
   TasksModule  */
    ],
   controllers: [AppController],
-  providers: [AppService,  /*JwtStrategy*/
+  providers: [AppService
+    
+    /*JwtStrategy*/
    /* {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

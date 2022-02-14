@@ -1,11 +1,13 @@
 import { Activite } from './entities/activite.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateActiviteDto } from './dto/create-activite.dto';
 import { UpdateActiviteDto } from './dto/update-activite.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { ParamsPaginateDto } from 'src/users/dto/params-paginate.dto';
 import { ActivitePage } from './entities/activite-page';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class ActivitesService {
@@ -13,10 +15,17 @@ export class ActivitesService {
   constructor(
     @InjectRepository(Activite)
     private readonly activiteRepository: Repository<Activite>,
+    @Inject(forwardRef(() => UsersService))
+    private readonly userserv: UsersService,
   ) {}
 
 
-  create(createActiviteDto: CreateActiviteDto) {
+  async create(id: number, createActiviteDto: CreateActiviteDto) {
+
+    let u =  await this.userserv.findById(id);
+    if( !u ){
+      throw new  UnauthorizedException();
+    }
     
     const act = new Activite();
     act.type = createActiviteDto.type;
@@ -24,10 +33,34 @@ export class ActivitesService {
     act.dist = createActiviteDto.dist;
     act.desc = createActiviteDto.desc;
  
-    act.userId = createActiviteDto.userId;
+    act.userId = id ;
 
     return this.activiteRepository.save( act );
   }
+
+  async createtoId(id: number, createActiviteDto: CreateActiviteDto) {
+    
+    let u =  await this.userserv.findById(id);
+    if( !u ){
+      throw new  NotFoundException('User not exist');
+    }
+
+
+    const act = new Activite();
+    act.type = createActiviteDto.type;
+    act.date = createActiviteDto.date;
+    act.dist = createActiviteDto.dist;
+    act.desc = createActiviteDto.desc;
+ 
+    act.userId = id;
+
+    return this.activiteRepository.save( act );
+  }
+
+
+
+
+
 
   async findAll(userid: number , params:  ParamsPaginateDto ): Promise<ActivitePage> {
     
@@ -79,7 +112,7 @@ export class ActivitesService {
      act.desc = updateActiviteDto.desc;
 
     
-     let a =  await this.activiteRepository.findOne(id);
+     let a =  await this.activiteRepository.findOne( id);
      if( !a ){
        throw new  NotFoundException('Activite not exist');
      }
@@ -105,3 +138,7 @@ export class ActivitesService {
     return this.activiteRepository.delete(id);
   }
 }
+function UserRepository(UserRepository: any) {
+  throw new Error('Function not implemented.');
+}
+
