@@ -91,7 +91,7 @@ export class UsersService {
 
 
 
-  async findAll(params:  ParamsPaginateDto ): Promise<UserPageDto> {
+  async findAll(id: number, params:  ParamsPaginateDto ): Promise<UserPageDto> {
     
     let page: number = Number( params.page );
     const search = params.search;
@@ -102,7 +102,8 @@ export class UsersService {
     }
      //doc https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
     const [list , count ] = await this.userRepository.findAndCount({
-      where: search ? { nom: Like('%' + search + '%') }  : {} ,
+      where: search ?  { nom: Like('%' + search + '%') ,  id: Not(id) }  : { id: Not(id) } ,
+   
       order: { nom: 'ASC' } ,
       skip: (page - 1) * pageSize,
       take: pageSize,

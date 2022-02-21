@@ -32,8 +32,8 @@ export class UsersController {
   //@Role(UserRole.ADMIN)
   //@UseGuards(RoleGuard)
   @Get()
-  findAll( @Query() params:  ParamsPaginateDto ) : Promise<UserPageDto> {
-    return  this.usersService.findAll( params );
+  findAll(@Request()req ,  @Query() params:  ParamsPaginateDto ) : Promise<UserPageDto> {
+    return  this.usersService.findAll(req.user.id , params );
   }
 
 

@@ -15,6 +15,7 @@ import { EventsModule } from './events/events.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { UsersService } from './users/users.service';
+import { GuestModule } from './guest/guest.module';
 
 @Module({
   imports: [
@@ -40,7 +41,8 @@ import { UsersService } from './users/users.service';
     AuthModule,
     UsersModule,
     ActivitesModule,
-    EventsModule
+    EventsModule,
+    GuestModule
   /* ScheduleModule.forRoot(),
   TasksModule  */
    ],
