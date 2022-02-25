@@ -1,5 +1,6 @@
-import { Controller, Get,  Param } from '@nestjs/common';
+import { Controller, Get,  Param, Query } from '@nestjs/common';
 import { GuestService } from './guest.service';
+import { ParamsGuest } from './params-guest';
 
 
 @Controller('guest')
@@ -9,8 +10,10 @@ export class GuestController {
 
 
   @Get(':page')
-  findAll(@Param('page') page: number) {
-    return  this.guestService.findAll(page);
+  findAll(@Param('page') page: number, @Query() query: ParamsGuest ) {
+
+    console.log( query );
+    return  this.guestService.findAll(page, query );
   }
 
 
